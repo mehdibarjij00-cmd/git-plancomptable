@@ -1,0 +1,80 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FinanceManager PRO - Authentification</title>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700|Raleway:300,400,600" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'style.css' %}">
+</head>
+<body>
+
+<div class="container">
+    <section id="formHolder">
+        <div class="row">
+
+            <div class="col-sm-6 brand">
+                <a href="#" class="logo">PLAN COMPTABLE <span>.</span></a>
+
+                <div class="heading">
+                    <h2>PLAN COMPTABLE</h2>
+                    <p>Gestion Simplifiée</p>
+                </div>
+
+                <div class="success-msg">
+                    <p>Super ! Votre compte est créé.</p>
+                    <a href="#" class="profile">Accéder au tableau de bord</a>
+                </div>
+            </div>
+
+            <div class="col-sm-6 form">
+                <div class="login form-peice">
+                    <form class="login-form" action="/login" method="post">
+                        {% csrf_token %} 
+                        
+                        <div class="form-group">
+                            <label for="loginemail">Identifiant </label>
+                            <input type="text" name="username" id="loginemail" placeholder=" " required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="loginPassword">Mot de passe</label>
+                            <input type="password" name="password" id="loginPassword" placeholder=" " required>
+                            
+                        </div>
+
+                        <div class="CTA">
+                            <input type="submit" value="Se connecter">
+                        </div>
+                    </form>
+                </div>
+            </div> 
+        </div> 
+    </section> 
+
+    <footer>
+        <p> <a href=""></a></p>
+    </footer>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const switchButtons = document.querySelectorAll('.switch');
+        const loginForm = document.querySelector('.login.form-peice');
+        const signupForm = document.querySelector('.signup.form-peice');
+
+        switchButtons.forEach(button => {
+            button.addEventListener('click', function(e) {
+                e.preventDefault();
+                if(loginForm) loginForm.classList.toggle('switched');
+                if(signupForm) signupForm.classList.toggle('switched');
+            });
+        });
+    });
+</script>
+
+</body>
+</html>

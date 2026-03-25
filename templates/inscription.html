@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inscription - FinanceManager PRO</title>
+    
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700|Raleway:300,400,600" rel="stylesheet">
+    
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="container" style="display: flex; justify-content: center; align-items: center; min-height: 100vh;">
+        
+        <div class="form" style="width: 100%; max-width: 500px;">
+            
+            <div class="signup form-peice" style="position: relative; left: 0; width: 100%; transform: none;">
+                
+                <h2 style="text-align: center; color: #f95959; font-family: 'Montserrat', sans-serif; font-size: 24px; margin-bottom: 30px; font-weight: bold;">Créer un compte</h2>
+
+                <form class="signup-form" action="/register" method="post" style="position: relative; top: 0; left: 0; transform: none; width: 100%;">
+                    
+                    <div class="form-group">
+                        <label for="name">Identifiant</label>
+                        <input type="text" name="username" id="name" class="name" required>
+                        <span class="error"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="role">Rôle (Gérant, Comptable...)</label>
+                        <input type="text" name="role" id="role" class="email" required>
+                        <span class="error"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="password">Mot de passe</label>
+                        <input type="password" name="password" id="password" class="pass" required>
+                        <span class="error"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="passwordCon">Confirmer Mot de passe</label>
+                        <input type="password" name="passwordCon" id="passwordCon" class="passConfirm" required>
+                        <span class="error"></span>
+                    </div>
+
+                    <div class="CTA">
+                        <input type="submit" value="S'inscrire" id="submit">
+                        <a href="authentification.html" class="switch">J'ai déjà un compte</a>
+                    </div>
+                </form>
+            </div>
+            
+        </div>
+    </div>
+
+</body>
+</html>
