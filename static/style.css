@@ -33,6 +33,7 @@ section#formHolder {
     position: relative;
     box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.3);
     z-index: 9999;
+    right: 130px;
 }
 
 .brand::before {
@@ -152,4 +153,49 @@ section#formHolder {
 footer {
     text-align: center;
     margin-top: 20px;
+}
+
+/* maj */
+.form-group {
+    position: relative;
+}
+
+/* Le design de la bulle d'avertissement */
+.caps-tooltip {
+    position: absolute;
+    right: 10px; /* On le place à droite dans le champ */
+    top: 35px; /* À ajuster légèrement selon la hauteur de ton input */
+    background-color: #ff5a5f; /* Ton rouge */
+    color: white;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: bold;
+    box-shadow: 0px 4px 8px rgba(255, 90, 95, 0.3);
+    pointer-events: none; /* Empêche la bulle de bloquer le clic dans l'input */
+    
+    /* Animation fluide au lieu du display block/none */
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(10px);
+    transition: all 0.3s cubic-bezier(0.68, -0.55, 0.27, 1.55); /* Effet rebond */
+}
+
+/* La classe qui sera ajoutée par le JavaScript */
+.caps-tooltip.active {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+/* Petit effet de pulse sur l'icône Majuscule */
+.caps-icon {
+    display: inline-block;
+    animation: pulseIcon 1.5s infinite;
+}
+
+@keyframes pulseIcon {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.2); }
+    100% { transform: scale(1); }
 }

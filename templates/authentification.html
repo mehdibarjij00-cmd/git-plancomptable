@@ -16,35 +16,31 @@
     <section id="formHolder">
         <div class="row">
 
-            <div class="col-sm-6 brand">
-                <a href="#" class="logo">PLAN COMPTABLE <span>.</span></a>
-
+            <div style="right: 130px !important;" class="col-sm-6 brand">
                 <div class="heading">
                     <h2>PLAN COMPTABLE</h2>
                     <p>Gestion Simplifiée</p>
-                </div>
-
-                <div class="success-msg">
-                    <p>Super ! Votre compte est créé.</p>
-                    <a href="#" class="profile">Accéder au tableau de bord</a>
                 </div>
             </div>
 
             <div class="col-sm-6 form">
                 <div class="login form-peice">
-                    <form class="login-form" action="/login" method="post">
+                    <form class="login-form" method="post">
                         {% csrf_token %} 
                         
                         <div class="form-group">
-                            <label for="loginemail">Identifiant </label>
-                            <input type="text" name="username" id="loginemail" placeholder=" " required>
+                            <label for="loginemail"> </label>
+                            <input type="text" name="username" id="loginemail" placeholder="Identifiant " required>
                         </div>
 
-                        <div class="form-group">
-                            <label for="loginPassword">Mot de passe</label>
-                            <input type="password" name="password" id="loginPassword" placeholder=" " required>
-                            
-                        </div>
+            <div class="form-group">
+             <label for="loginPassword"></label>
+             <input type="password" name="password" id="loginPassword" placeholder="Mot de passe " required>
+    
+                <div id="caps-warning" class="caps-tooltip">
+                    <span class="caps-icon">⇪</span> Majuscule activée
+                </div>
+            </div>
 
                         <div class="CTA">
                             <input type="submit" value="Se connecter">
@@ -62,6 +58,7 @@
 
 <script>
     document.addEventListener("DOMContentLoaded", function() {
+        // --- Code existant pour le switch (si tu l'utilises plus tard) ---
         const switchButtons = document.querySelectorAll('.switch');
         const loginForm = document.querySelector('.login.form-peice');
         const signupForm = document.querySelector('.signup.form-peice');
@@ -73,8 +70,42 @@
                 if(signupForm) signupForm.classList.toggle('switched');
             });
         });
+
+        // --- NOUVEAU : Code pour détecter la Majuscule ---
+        const loginInput = document.getElementById('loginemail');
+        const passwordInput = document.getElementById('loginPassword');
+        const capsWarning = document.getElementById('caps-warning');
+
+        // Fonction qui vérifie l'état de la touche CapsLock
+        function checkCapsLock(event) {
+            if (event.getModifierState && event.getModifierState('CapsLock')) {
+                capsWarning.style.display = 'block'; // Affiche l'alerte
+            } else {
+                capsWarning.style.display = 'none';  // Cache l'alerte
+            }
+        }
+
+        // On écoute les frappes clavier et les clics sur les deux champs
+        if (loginInput && passwordInput && capsWarning) {
+            loginInput.addEventListener('keyup', checkCapsLock);
+            loginInput.addEventListener('mousedown', checkCapsLock);
+            passwordInput.addEventListener('keyup', checkCapsLock);
+            passwordInput.addEventListener('mousedown', checkCapsLock);
+        }
     });
 </script>
 
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="{% static 'index.js' %}"></script>
+
+{% if messages and request.method == 'POST' %}
+    <script>
+        {% for message in messages %}
+            {% if message.tags == "error" %}
+                showErrorAlert("{{ message }}");
+            {% endif %}
+        {% endfor %}
+    </script>
+{% endif %}
 </body>
 </html>

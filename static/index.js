@@ -1,3 +1,28 @@
+const loginInput = document.getElementById('loginemail');
+const passwordInput = document.getElementById('loginPassword');
+const capsWarning = document.getElementById('caps-warning');
+// Fonction pour vérifier l'état de la touche Majuscule
+function checkCapsLock(event) {
+    if (event.getModifierState && event.getModifierState('CapsLock')) {
+        // On ajoute la classe "active" pour déclencher l'animation CSS
+        capsWarning.classList.add('active'); 
+    } else {
+        // On la retire pour faire disparaître la bulle en douceur
+        capsWarning.classList.remove('active');  
+    }
+}
+// 
+// Les écouteurs d'événements restent les mêmes
+if (loginInput && passwordInput && capsWarning) {
+    loginInput.addEventListener('keyup', checkCapsLock);
+    loginInput.addEventListener('mousedown', checkCapsLock);
+    passwordInput.addEventListener('keyup', checkCapsLock);
+    passwordInput.addEventListener('mousedown', checkCapsLock);
+}
+
+
+
+
 /*global $, document, window, setTimeout, navigator, console, location*/
 $(document).ready(function () {
 
@@ -113,3 +138,30 @@ $(document).ready(function () {
 
 
 });
+
+
+// Fonction pour afficher l'alerte d'erreur
+function showErrorAlert(message) {
+    Swal.fire({
+        icon: 'error',
+        title: 'Accès Refusé',
+        text: message,
+        confirmButtonColor: '#ff5a5f',
+        confirmButtonText: 'Réessayer',
+        showClass: {
+            popup: 'animate__animated animate__fadeInDown' // Petit effet d'entrée
+        },
+        didOpen: () => {
+            const container = document.querySelector('.swal2-container');
+            if (container) container.style.zIndex = "10000";
+        }
+    }).then((result) => {
+        if (result.isConfirmed) {
+            // Cette ligne permet de "nettoyer" l'état pour que 
+            // l'alerte ne revienne pas si on fait F5 par erreur.
+            window.history.replaceState({}, document.title, window.location.pathname);
+        }
+    });
+}
+
+// 

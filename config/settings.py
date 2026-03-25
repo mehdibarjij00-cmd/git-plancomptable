@@ -16,7 +16,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'authentification', 
 ]
+
 
 # 4. MIDDLEWARE (Sécurité)
 MIDDLEWARE = [
