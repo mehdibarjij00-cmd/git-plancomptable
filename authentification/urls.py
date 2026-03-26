@@ -2,19 +2,23 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
-    # --- AUTHENTIFICATION ---
+    # --- Authentification ---
     path('', views.login_view, name='login'),
-    path('dashboard/', views.dashboard_view, name='dashboard'),
     path('logout/', views.logout_view, name='logout'),
     
-    # --- COMPTABILITÉ (COEUR DU MÉTIER) ---
+    # --- Dashboard & Banques ---
+    path('dashboard/', views.dashboard_view, name='dashboard'),
+    path('sync-banque/', views.sync_bank_api, name='sync_bank_api'),
+    
+    # --- Module Comptabilité ---
     path('comptabilite/', views.comptabilite_view, name='comptabilite'),
-    path('comptabilite/ajouter/', views.ajouter_ecriture, name='ajouter_ecriture'),
-    path('comptabilite/supprimer/<int:id>/', views.supprimer_ecriture, name='supprimer_ecriture'),
-
-    # --- IMPORTS / EXPORTS & APIS ---
-    path('export-excel/', views.export_excel, name='export_excel'),
-    path('import-excel/', views.import_excel, name='import_excel'),
-    path('delete-transaction/<int:id>/', views.delete_transaction, name='delete_transaction'),
-    path('sync-bank/', views.sync_bank_api, name='sync_bank'),
+    path('ajouter_ecriture/', views.ajouter_ecriture, name='ajouter_ecriture'),
+    path('supprimer_ecriture/<int:id>/', views.supprimer_ecriture, name='supprimer_ecriture'),
+    
+    # --- Imports / Exports ---
+    path('export-compta/', views.export_excel_compta, name='export_excel'), # On garde 'export_excel' pour le HTML
+    path('import-compta/', views.import_excel_compta, name='import_excel'),
+    
+    # --- Documents PDF ---
+    path('generer-facture/<int:ecriture_id>/', views.generer_facture_pdf, name='generer_facture_pdf'),
 ]
