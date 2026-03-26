@@ -164,4 +164,24 @@ function showErrorAlert(message) {
     });
 }
 
-// 
+// sweet alert pour les erreurs de suppression
+// index.js
+
+// index.js
+
+function confirmerSuppression(url) {
+    Swal.fire({
+        title: 'Es-tu sûr ?',
+        text: "Cette action est risquée !",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: 'Oui, supprimer !',
+        cancelButtonText: 'Annuler'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            window.location.href = url;
+        }
+    }); // On ferme proprement le .then
+} // On ferme proprement la fonction

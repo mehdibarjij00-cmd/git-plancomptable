@@ -30,3 +30,29 @@ class Transaction(models.Model):
 
     def __str__(self):
         return f"{self.date} - {self.libelle} ({self.montant} €)"
+
+# --------------------------------------------------------  
+
+# comptabilite/models.py
+# --- TABLE DU PLAN COMPTABLE ---
+class CompteComptable(models.Model):
+    numero = models.CharField(max_length=10, unique=True)
+    nom = models.CharField(max_length=150)
+    classe = models.IntegerField() # 1:Capitaux, 2:Immo, 3:Stocks, 4:Tiers, 5:Tréso, 6:Charges, 7:Produits
+
+    def __str__(self):
+        return f"{self.numero} - {self.nom}"
+
+# --- TABLE DES ÉCRITURES COMPTABLES ---
+class EcritureComptable(models.Model):
+    entreprise = models.ForeignKey(Entreprise, on_delete=models.CASCADE)
+    date = models.DateField()
+    libelle = models.CharField(max_length=200)
+    compte = models.ForeignKey(CompteComptable, on_delete=models.RESTRICT)
+    
+    # En comptabilité, on utilise toujours le Débit et le Crédit séparément
+    debit = models.DecimalField(max_digits=12, decimal_places=2, default=0.00)
+    credit = models.DecimalField(max_digits=12, decimal_places=2, default=0.00)
+
+    def __str__(self):
+        return f"{self.date} | {self.compte.numero} | D:{self.debit} C:{self.credit}"

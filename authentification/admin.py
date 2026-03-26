@@ -1,3 +1,6 @@
 from django.contrib import admin
+from .models import Entreprise, CompteComptable, EcritureComptable
 
-# Register your models here.
+admin.site.register(Entreprise)
+admin.site.register(CompteComptable)
+admin.site.register(EcritureComptable)
