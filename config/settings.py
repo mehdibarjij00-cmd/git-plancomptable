@@ -1,4 +1,7 @@
-ALLOWED_HOSTS = ['*']
+# Autoriser domaine Render ainsi que les tests en local
+ALLOWED_HOSTS = ['git-plancomptable.onrender.com', 'localhost', '127.0.0.1']
+
+
 from pathlib import Path
 
 
