@@ -1,4 +1,4 @@
-/* --- Variables et Base --- */
+--- Variables et Base ---
 body {
     font-family: 'Montserrat', sans-serif;
     background: #f7edd5;
@@ -199,3 +199,5 @@ footer {
     50% { transform: scale(1.2); }
     100% { transform: scale(1); }
 }
+
+
