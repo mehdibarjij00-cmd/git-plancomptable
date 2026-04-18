@@ -57,17 +57,22 @@ TEMPLATES = [
 ]
 
 # 7. BASE DE DONNÉES
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': 'plan_comptable_db',
+#         'USER': 'postgres',
+#         'PASSWORD': 'Mehdi123', # Celui que tu as mis dans pgAdmin
+#         'HOST': '127.0.0.1',
+#         'PORT': '5432',
+#     }
+# }
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'plan_comptable_db',
-        'USER': 'postgres',
-        'PASSWORD': 'Mehdi123', # Celui que tu as mis dans pgAdmin
-        'HOST': '127.0.0.1',
-        'PORT': '5432',
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
-
 # 8. VALIDATION DES MOTS DE PASSE
 AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',},
