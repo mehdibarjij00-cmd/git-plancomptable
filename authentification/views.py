@@ -1,5 +1,6 @@
 import openpyxl
 import random
+
 from django.contrib.auth.models import User, Group , Permission
 from django.contrib.contenttypes.models import ContentType
 from datetime import datetime, timedelta
@@ -384,96 +385,60 @@ def reporting_view(request):
 @login_required(login_url='login')
 def administration_view(request):
     if not request.user.is_superuser:
-        messages.error(request, "Accès refusé. Vous n'avez pas les droits d'administration.")
+        messages.error(request, "Accès refusé.")
         return redirect('dashboard')
+    
+    context = {
+        'utilisateurs': User.objects.all().order_by('-date_joined'),
+        'groupes': Group.objects.all(),
+        'permissions': Permission.objects.filter(content_type__app_label='authentification'),
+    }
+    return render(request, 'administration.html', context)
 
-    utilisateurs = User.objects.all().order_by('-date_joined')
-    groupes = Group.objects.all()
 
-    return render(request, 'administration.html', {
-        'utilisateurs': utilisateurs,
-        'groupes': groupes,
-    })
-
-@login_required(login_url='login')
-def ajouter_utilisateur(request):
-    if request.method == 'POST' and request.user.is_superuser:
-        username = request.POST.get('username')
-        password = request.POST.get('password')
-        role = request.POST.get('role') # Peut être 'admin' ou l'ID d'un groupe
-
-        if User.objects.filter(username=username).exists():
-            messages.error(request, f"L'identifiant '{username}' existe déjà.")
-            return redirect('administration_custom')
-
-        # Création de l'utilisateur avec mot de passe sécurisé (haché automatiquement)
-        user = User.objects.create_user(username=username, password=password)
-
-        # Attribution du rôle / groupe
-        if role == 'admin':
-            user.is_superuser = True
-            user.is_staff = True
-            user.save()
-        elif role:
-            try:
-                groupe = Group.objects.get(id=role)
-                user.groups.add(groupe)
-            except Group.DoesNotExist:
-                pass
-
-        messages.success(request, f"L'utilisateur {username} a été créé avec succès.")
-    return redirect('administration_custom')
+# modifier utilisateur (ex: changement de rôle)
 
 @login_required(login_url='login')
 def modifier_utilisateur(request, user_id):
     if request.method == 'POST' and request.user.is_superuser:
         user = get_object_or_404(User, id=user_id)
-        nouveau_username = request.POST.get('username')
-        nouveau_password = request.POST.get('password')
-        role = request.POST.get('role')
+        password = request.POST.get('password')
 
-        # Vérifier que le nouveau pseudo n'est pas déjà pris par quelqu'un d'autre
-        if User.objects.filter(username=nouveau_username).exclude(id=user_id).exists():
-            messages.error(request, "Cet identifiant est déjà utilisé.")
+        if not password:
+            messages.error(request, "Le mot de passe est obligatoire pour valider la modification.")
             return redirect('administration_custom')
 
-        user.username = nouveau_username
+        user.username = request.POST.get('username')
+        user.set_password(password)
         
-        # Si le champ mot de passe n'est pas vide, on le change (hachage auto)
-        if nouveau_password:
-            user.set_password(nouveau_password)
-
-        # Nettoyage et mise à jour des rôles
         user.is_superuser = False
         user.is_staff = False
         user.groups.clear()
 
+        role = request.POST.get('role')
         if role == 'admin':
             user.is_superuser = True
             user.is_staff = True
         elif role:
-            try:
-                groupe = Group.objects.get(id=role)
-                user.groups.add(groupe)
-            except Group.DoesNotExist:
-                pass
+            groupe = Group.objects.get(id=role)
+            user.groups.add(groupe)
         
         user.save()
-        messages.success(request, f"Le profil de {user.username} a été mis à jour.")
+        messages.success(request, f"Profil de {user.username} mis à jour.")
     return redirect('administration_custom')
 
+
+
+#supprimer utilisateur  
 @login_required(login_url='login')
 def supprimer_utilisateur(request, user_id):
-    if not request.user.is_superuser:
-        return redirect('dashboard')
-        
-    user = get_object_or_404(User, id=user_id)
-    if user == request.user:
-        messages.error(request, "Vous ne pouvez pas supprimer votre propre compte !")
-    else:
-        user.delete()
-        messages.success(request, "Utilisateur supprimé de la base de données.")
-        
+    if request.user.is_superuser:
+        user = get_object_or_404(User, id=user_id)
+        if user != request.user:
+            user.delete()
+            messages.success(request, "Utilisateur supprimé.")
+        else:
+            messages.error(request, "Impossible de vous supprimer vous-même.")
     return redirect('administration_custom')
 
 # ==========================================
@@ -498,27 +463,74 @@ def administration_view(request):
         'permissions': permissions,
     })
 
+# ajouter_utilisateur
+@login_required(login_url='login')
+def ajouter_utilisateur(request):
+    if request.method == 'POST' and request.user.is_superuser:
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        role = request.POST.get('role')
+
+        if not password:
+            messages.error(request, "Le mot de passe est obligatoire.")
+            return redirect('administration_custom')
+
+        if User.objects.filter(username=username).exists():
+            messages.error(request, "Cet identifiant existe déjà.")
+            return redirect('administration_custom')
+
+        user = User.objects.create_user(username=username, password=password)
+        if role == 'admin':
+            user.is_superuser = True
+            user.is_staff = True
+            user.save()
+        elif role:
+            groupe = Group.objects.get(id=role)
+            user.groups.add(groupe)
+        
+        messages.success(request, f"Utilisateur {username} créé.")
+    return redirect('administration_custom')
+# -------------------------
+# ajouter grp
 @login_required(login_url='login')
 def ajouter_groupe(request):
     if request.method == 'POST' and request.user.is_superuser:
-        nom_groupe = request.POST.get('name')
-        perms_ids = request.POST.getlist('permissions')
-        
-        if Group.objects.filter(name=nom_groupe).exists():
-            messages.error(request, f"Le groupe '{nom_groupe}' existe déjà.")
-        else:
-            nouveau_groupe = Group.objects.create(name=nom_groupe)
-            # On ajoute les permissions sélectionnées
-            if perms_ids:
-                nouveau_groupe.permissions.set(perms_ids)
-            messages.success(request, f"Groupe '{nom_groupe}' créé avec succès.")
-            
+        name = request.POST.get('name')
+        if not Group.objects.filter(name=name).exists():
+            Group.objects.create(name=name)
+            messages.success(request, f"Groupe {name} créé.")
     return redirect('administration_custom')
+
+
+
+# =======supprimer groupe
 
 @login_required(login_url='login')
 def supprimer_groupe(request, group_id):
     if request.user.is_superuser:
-        groupe = get_object_or_404(Group, id=group_id)
-        groupe.delete()
+        get_object_or_404(Group, id=group_id).delete()
         messages.success(request, "Groupe supprimé.")
     return redirect('administration_custom')
+
+
+# modifier groupe (ajout/suppression de permissions)
+@login_required(login_url='login')
+def modifier_groupe(request, group_id):
+    if request.method == 'POST' and request.user.is_superuser:
+        groupe = get_object_or_404(Group, id=group_id)
+        groupe.name = request.POST.get('name')
+        groupe.save()
+        
+        groupe.permissions.set(request.POST.getlist('permissions'))
+        
+        # Mise à jour des membres
+        membres_ids = request.POST.getlist('membres')
+        for u in User.objects.all():
+            u.groups.remove(groupe)
+        for u in User.objects.filter(id__in=membres_ids):
+            u.groups.add(groupe)
+            
+        messages.success(request, f"Groupe {groupe.name} mis à jour.")
+    return redirect('administration_custom')
+
+    # ==========================

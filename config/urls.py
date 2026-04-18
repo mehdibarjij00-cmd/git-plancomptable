@@ -33,4 +33,5 @@ path('administration/modifier/<int:user_id>/', views.modifier_utilisateur, name=
 path('administration/supprimer/<int:user_id>/', views.supprimer_utilisateur, name='supprimer_utilisateur'),
 path('administration/ajouter-groupe/', views.ajouter_groupe, name='ajouter_groupe'),
 path('administration/supprimer-groupe/<int:group_id>/', views.supprimer_groupe, name='supprimer_groupe'),
+path('administration/modifier-groupe/<int:group_id>/', views.modifier_groupe, name='modifier_groupe'),
 ]
