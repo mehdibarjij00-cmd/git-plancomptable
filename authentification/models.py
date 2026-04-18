@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.utils import timezone
 
 # --- TABLE DES PME ---
 class Entreprise(models.Model):
@@ -43,3 +44,40 @@ class EcritureComptable(models.Model):
 
     def __str__(self):
         return f"{self.date} | {self.compte.numero} | D:{self.debit} C:{self.credit}"
+    
+
+
+
+
+
+    # --- TABLE DES FACTURES ---
+    # --- AJOUT POUR LA FACTURATION ---
+class Client(models.Model):
+    entreprise = models.ForeignKey(Entreprise, on_delete=models.CASCADE)
+    numero_client = models.CharField(max_length=50, unique=True) # Numéro unique
+    nom_client = models.CharField(max_length=255)
+    email_client = models.EmailField(blank=True, null=True)
+    telephone = models.CharField(max_length=20, blank=True, null=True)
+    adresse = models.TextField(blank=True, null=True)
+    description = models.TextField(blank=True, null=True)
+    date_creation = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.numero_client} - {self.nom_client}"
+
+class Facture(models.Model):
+    STATUT_CHOICES = [
+        ('ATTENTE', 'En attente'),
+        ('ENVOYE', 'Envoyée'),
+        ('PAYE', 'Payée'),
+    ]
+    entreprise = models.ForeignKey(Entreprise, on_delete=models.CASCADE)
+    numero_facture = models.CharField(max_length=50, unique=True)
+    client = models.ForeignKey(Client, on_delete=models.CASCADE)
+    date_creation = models.DateField(auto_now_add=True)
+    date_echeance = models.DateField()
+    montant_ttc = models.DecimalField(max_digits=10, decimal_places=2)
+    statut = models.CharField(max_length=15, choices=STATUT_CHOICES, default='ATTENTE')
+
+    def __str__(self):
+        return self.numero_facture

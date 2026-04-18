@@ -1,0 +1,311 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FinanceManager PRO - Facturation</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { background-color: #f4f7f6; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        .sidebar { min-height: 100vh; width: 260px; background: #1e2b3c; color: #fff; position: fixed; transition: all 0.3s; z-index: 1000; }
+        .sidebar a { color: #adb5bd; text-decoration: none; padding: 12px 20px; display: block; border-left: 3px solid transparent; }
+        .sidebar a:hover, .sidebar a.active { background: #2c3e50; color: #fff; border-left: 3px solid #0d6efd; }
+        .main-content { margin-left: 260px; padding: 30px; }
+        .card-custom { border-radius: 12px; border: none; box-shadow: 0 5px 15px rgba(0,0,0,0.05); background: white; }
+        .badge-paye { background-color: #d1e7dd; color: #0f5132; }
+        .badge-envoye { background-color: #cfe2ff; color: #084298; }
+        .badge-attente { background-color: #fff3cd; color: #856404; }
+    </style>
+</head>
+<body>
+    <div class="sidebar shadow">
+        <div class="p-4 fw-bold border-bottom border-secondary mb-3 text-center">
+            <i class="fas fa-chart-line text-primary me-2"></i> FINANCE<span class="text-primary">PRO</span>
+        </div>
+        <nav>
+            <a href="{% url 'dashboard' %}"><i class="fas fa-home me-2"></i> Dashboard</a>
+            <a href="{% url 'comptabilite' %}"><i class="fas fa-book me-2"></i> Comptabilité</a>
+            <a href="{% url 'facturation' %}" class="active"><i class="fas fa-file-invoice-dollar me-2"></i> Facturation</a>
+            <a href="{% url 'reporting' %}" class="{% if request.resolver_match.url_name == 'reporting' %}active{% endif %}"><i class="fas fa-chart-pie me-2"></i> Reporting</a>
+           <a href="{% url 'administration_custom' %}" class="{% if request.resolver_match.url_name == 'administration_custom' %}active{% endif %}"><i class="fas fa-users-cog me-2"></i> Administration</a>
+            <a href="{% url 'logout' %}" class="mt-5 text-danger"><i class="fas fa-sign-out-alt me-2"></i> Déconnexion</a>
+        </nav>
+    </div>
+
+    <div class="main-content">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h3 class="fw-bold mb-0">Gestion des Factures</h3>
+                <p class="text-muted">Suivez vos ventes et vos encaissements</p>
+            </div>
+            <div class="d-flex gap-2">
+                <button class="btn btn-outline-primary shadow-sm" data-bs-toggle="modal" data-bs-target="#clientModal">
+                    <i class="fas fa-user-plus me-2"></i>Client
+                </button>
+                <button class="btn btn-primary shadow-sm" data-bs-toggle="modal" data-bs-target="#factureModal">
+                    <i class="fas fa-plus me-2"></i>Nouvelle Facture
+                </button>
+            </div>
+        </div>
+
+        <div class="row mb-4">
+            <div class="col-md-4">
+                <div class="card card-custom p-3 border-start border-primary border-4">
+                    <small class="text-muted fw-bold">TOTAL FACTURÉ</small>
+                    <h4 class="fw-bold mb-0">{{ total_facture|floatformat:2|default:"0,00" }} €</h4>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card card-custom p-3 border-start border-success border-4">
+                    <small class="text-muted fw-bold">ENCAISSÉ</small>
+                    <h4 class="fw-bold mb-0 text-success">{{ total_paye|floatformat:2|default:"0,00" }} €</h4>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card card-custom p-3 border-start border-warning border-4">
+                    <small class="text-muted fw-bold">EN ATTENTE</small>
+                    <h4 class="fw-bold mb-0 text-warning">{{ total_attente|floatformat:2|default:"0,00" }} €</h4>
+                </div>
+            </div>
+        </div>
+
+        <div class="card card-custom">
+            <div class="card-body p-0">
+                <div class="p-3 border-bottom d-flex justify-content-between align-items-center">
+                    <h5 class="fw-bold mb-0">Historique des opérations</h5>
+                    <input type="text" class="form-control form-control-sm w-25" placeholder="Rechercher une facture...">
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="bg-light">
+                            <tr>
+                                <th class="ps-4">N° Facture</th>
+                                <th>Client</th>
+                                <th>Date d'émission</th>
+                                <th>Échéance</th>
+                                <th>Montant TTC</th>
+                                <th>Statut</th>
+                                <th class="text-end pe-4">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for f in factures %}
+                            <tr>
+                                <td class="ps-4 fw-bold text-primary">#{{ f.numero_facture }}</td>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <div class="avatar-sm bg-soft-primary me-2"></div>
+                                        <span>{{ f.client.nom_client }}</span>
+                                    </div>
+                                </td>
+                                <td>{{ f.date_creation|date:"d/m/Y" }}</td>
+                                <td>{{ f.date_echeance|date:"d/m/Y" }}</td>
+                                <td class="fw-bold">{{ f.montant_ttc|floatformat:2 }} €</td>
+                                <td>
+                                    {% if f.statut == 'PAYE' %}
+                                        <span class="badge badge-paye"><i class="fas fa-check-circle me-1"></i> Payée</span>
+                                    {% elif f.statut == 'ENVOYE' %}
+                                        <span class="badge badge-envoye"><i class="fas fa-paper-plane me-1"></i> Envoyée</span>
+                                    {% else %}
+                                        <span class="badge badge-attente"><i class="fas fa-clock me-1"></i> En attente</span>
+                                    {% endif %}
+                                </td>
+                                <td class="text-end pe-4">
+                                    <div class="btn-group">
+                                        <button class="btn btn-sm btn-light border" title="Voir" data-bs-toggle="modal" data-bs-target="#voirFactureModal{{ f.id }}"><i class="fas fa-eye"></i></button>
+                                        <a href="{% url 'pdf_facture' f.id %}" class="btn btn-sm btn-light border text-dark" title="Imprimer PDF"><i class="fas fa-file-pdf"></i></a>
+                                        <button class="btn btn-sm btn-light border text-danger" title="Supprimer" onclick="confirmerSuppression('{% url 'supprimer_facture' f.id %}')"><i class="fas fa-trash"></i></button>
+                                    </div>
+                                </td>
+                            </tr>
+
+                            <div class="modal fade text-start" id="voirFactureModal{{ f.id }}" tabindex="-1">
+                                <div class="modal-dialog modal-dialog-centered">
+                                    <div class="modal-content border-0 shadow-lg">
+                                        <div class="modal-header bg-light border-bottom-0">
+                                            <h5 class="modal-title fw-bold text-dark">Facture <span class="text-primary">#{{ f.numero_facture }}</span></h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                        </div>
+                                        <div class="modal-body p-4 pt-2">
+                                            <div class="row mb-4">
+                                                <div class="col-sm-6">
+                                                    <h6 class="text-muted text-uppercase fw-bold mb-2" style="font-size: 0.8rem;">Informations Client</h6>
+                                                    <p class="mb-1 fw-bold text-dark">{{ f.client.nom_client }}</p>
+                                                    <p class="mb-1 text-muted small"><i class="fas fa-envelope me-1"></i> {{ f.client.email_client|default:"Non renseigné" }}</p>
+                                                    <p class="mb-1 text-muted small"><i class="fas fa-phone me-1"></i> {{ f.client.telephone|default:"Non renseigné" }}</p>
+                                                    <p class="mb-1 text-muted small"><i class="fas fa-map-marker-alt me-1"></i> {{ f.client.adresse|default:"Non renseignée" }}</p>
+                                                </div>
+                                                <div class="col-sm-6 text-sm-end mt-3 mt-sm-0">
+                                                    <h6 class="text-muted text-uppercase fw-bold mb-2" style="font-size: 0.8rem;">Détails Facture</h6>
+                                                    <p class="mb-1 text-dark small"><strong>Émission :</strong> {{ f.date_creation|date:"d/m/Y" }}</p>
+                                                    <p class="mb-1 text-dark small"><strong>Échéance :</strong> {{ f.date_echeance|date:"d/m/Y" }}</p>
+                                                    <p class="mb-1 small"><strong>Statut :</strong> 
+                                                        {% if f.statut == 'PAYE' %}<span class="text-success fw-bold">Payée</span>
+                                                        {% elif f.statut == 'ENVOYE' %}<span class="text-primary fw-bold">Envoyée</span>
+                                                        {% else %}<span class="text-warning fw-bold">En attente</span>{% endif %}
+                                                    </p>
+                                                </div>
+                                            </div>
+                                            <div class="bg-light p-3 rounded d-flex justify-content-between align-items-center">
+                                                <span class="fw-bold text-secondary">MONTANT TOTAL TTC</span>
+                                                <h3 class="fw-bold text-dark mb-0">{{ f.montant_ttc|floatformat:2 }} €</h3>
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer border-top-0 bg-light">
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+                                            <a href="{% url 'pdf_facture' f.id %}" class="btn btn-dark"><i class="fas fa-file-pdf me-2"></i>Télécharger PDF</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            {% empty %}
+                            <tr>
+                                <td colspan="7" class="text-center py-5">
+                                    <img src="https://cdn-icons-png.flaticon.com/512/4076/4076432.png" width="80" class="mb-3 opacity-50">
+                                    <p class="text-muted">Aucune facture enregistrée pour le moment.</p>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="clientModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow-lg">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title fw-bold">Nouveau Client</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <form action="{% url 'ajouter_client' %}" method="POST">
+                    {% csrf_token %}
+                    <div class="modal-body p-4">
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Nom complet / Raison Sociale</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-user"></i></span>
+                                <input type="text" name="nom_client" class="form-control" placeholder="Ex: Cactus Informatique" required>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Email de facturation</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-envelope"></i></span>
+                                <input type="email" name="email_client" class="form-control" placeholder="contact@entreprise.com">
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Téléphone</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-phone"></i></span>
+                                <input type="text" name="telephone" class="form-control" placeholder="06 12 34 56 78">
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Adresse</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-map-marker-alt"></i></span>
+                                <input type="text" name="adresse" class="form-control" placeholder="Adresse complète">
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Description / Notes</label>
+                            <textarea name="description" class="form-control" rows="2" placeholder="Informations additionnelles..."></textarea>
+                        </div>
+                    </div>
+                    <div class="modal-footer bg-light">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                        <button type="submit" class="btn btn-primary px-4">Enregistrer le client</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="factureModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow-lg">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title fw-bold">Nouvelle Facture</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <form action="{% url 'creer_facture' %}" method="POST">
+                    {% csrf_token %}
+                    <div class="modal-body p-4">
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Client</label>
+                            <select name="client" class="form-select" required>
+                                <option value="">-- Sélectionner un client --</option>
+                                {% for c in clients %}
+                                <option value="{{ c.id }}">{{ c.nom_client }}</option>
+                                {% empty %}
+                                <option value="" disabled>⚠️ Ajoutez un client d'abord !</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Date d'échéance</label>
+                            <input type="date" name="date_echeance" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Montant TTC (€)</label>
+                            <input type="number" step="0.01" name="montant_ttc" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Statut</label>
+                            <select name="statut" class="form-select" required>
+                                <option value="ATTENTE">En attente</option>
+                                <option value="ENVOYE">Envoyée</option>
+                                <option value="PAYE">Payée</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="modal-footer bg-light">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                        <button type="submit" class="btn btn-primary px-4">Créer la facture</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        // Fonction SweetAlert pour la suppression
+        function confirmerSuppression(url) {
+            Swal.fire({
+                title: 'Es-tu sûr ?',
+                text: "Cette action est irréversible !",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Oui, supprimer !',
+                cancelButtonText: 'Annuler'
+            }).then((result) => { 
+                if (result.isConfirmed) { 
+                    window.location.href = url; 
+                } 
+            })
+        }
+
+        // Affichage des messages Django via SweetAlert
+        {% if messages %}
+            {% for message in messages %}
+                Swal.fire({
+                    icon: '{% if message.tags == "error" %}error{% elif message.tags == "info" %}info{% else %}success{% endif %}',
+                    title: '{% if message.tags == "error" %}Oups...{% elif message.tags == "info" %}Info{% else %}Succès{% endif %}',
+                    text: "{{ message|safe }}",
+                    confirmButtonColor: '#3085d6'
+                }).then(() => { window.history.replaceState({}, document.title, window.location.pathname); });
+            {% endfor %}
+        {% endif %}
+    </script>
+</body>
+</html>

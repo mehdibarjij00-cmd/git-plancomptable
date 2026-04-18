@@ -33,14 +33,13 @@
                             <input type="text" name="username" id="loginemail" placeholder="Identifiant " required>
                         </div>
 
-            <div class="form-group">
-             <label for="loginPassword"></label>
-             <input type="password" name="password" id="loginPassword" placeholder="Mot de passe " required>
-    
-                <div id="caps-warning" class="caps-tooltip">
-                    <span class="caps-icon">⇪</span> Majuscule activée
-                </div>
-            </div>
+                        <div class="form-group">
+                            <label for="loginPassword"></label>
+                            <input type="password" name="password" id="loginPassword" placeholder="Mot de passe " required>
+                            <div id="caps-warning" class="caps-tooltip">
+                                <span class="caps-icon">⇪</span> Majuscule activée
+                            </div>
+                        </div>
 
                         <div class="CTA">
                             <input type="submit" value="Se connecter">
@@ -58,7 +57,6 @@
 
 <script>
     document.addEventListener("DOMContentLoaded", function() {
-        // --- Code existant pour le switch (si tu l'utilises plus tard) ---
         const switchButtons = document.querySelectorAll('.switch');
         const loginForm = document.querySelector('.login.form-peice');
         const signupForm = document.querySelector('.signup.form-peice');
@@ -71,21 +69,18 @@
             });
         });
 
-        // --- NOUVEAU : Code pour détecter la Majuscule ---
         const loginInput = document.getElementById('loginemail');
         const passwordInput = document.getElementById('loginPassword');
         const capsWarning = document.getElementById('caps-warning');
 
-        // Fonction qui vérifie l'état de la touche CapsLock
         function checkCapsLock(event) {
             if (event.getModifierState && event.getModifierState('CapsLock')) {
-                capsWarning.style.display = 'block'; // Affiche l'alerte
+                capsWarning.style.display = 'block'; 
             } else {
-                capsWarning.style.display = 'none';  // Cache l'alerte
+                capsWarning.style.display = 'none';  
             }
         }
 
-        // On écoute les frappes clavier et les clics sur les deux champs
         if (loginInput && passwordInput && capsWarning) {
             loginInput.addEventListener('keyup', checkCapsLock);
             loginInput.addEventListener('mousedown', checkCapsLock);
