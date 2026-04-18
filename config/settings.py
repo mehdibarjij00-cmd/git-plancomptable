@@ -1,4 +1,6 @@
+ALLOWED_HOSTS = ['*']
 from pathlib import Path
+
 
 # 1. DOSSIER DE BASE
 BASE_DIR = Path(__file__).resolve().parent.parent
