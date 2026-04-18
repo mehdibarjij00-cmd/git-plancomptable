@@ -8,24 +8,23 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        body { background-color: #f4f7f6; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-        .sidebar { min-height: 100vh; width: 260px; background: #1e2b3c; color: #fff; position: fixed; transition: all 0.3s; z-index: 1000; }
-        .sidebar-brand { padding: 20px; font-size: 1.2rem; font-weight: bold; border-bottom: 1px solid rgba(255,255,255,0.1); }
-        .sidebar a { color: #adb5bd; text-decoration: none; padding: 12px 20px; display: block; border-left: 3px solid transparent; transition: all 0.3s; }
+        body { background-color: #f4f7f6; font-family: 'Segoe UI', sans-serif; }
+        .sidebar { min-height: 100vh; width: 260px; background: #1e2b3c; color: #fff; position: fixed; z-index: 1000; }
+        .sidebar a { color: #adb5bd; text-decoration: none; padding: 12px 20px; display: block; border-left: 3px solid transparent; }
         .sidebar a:hover, .sidebar a.active { background: #2c3e50; color: #fff; border-left: 3px solid #0d6efd; }
         .main-content { margin-left: 260px; padding-bottom: 50px; }
         .top-navbar { background: #fff; padding: 15px 30px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
         .table-custom { background: white; border-radius: 15px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
-        .scroll-area { max-height: 200px; overflow-y: auto; border: 1px solid #dee2e6; padding: 10px; border-radius: 8px; background: #f8f9fa; }
+        .scroll-area { max-height: 250px; overflow-y: auto; border: 1px solid #eee; padding: 10px; border-radius: 8px; background: #fdfdfd; }
     </style>
 </head>
 <body>
 
-    <div class="sidebar shadow">
-        <div class="sidebar-brand text-center">
+    <div class="sidebar">
+        <div class="p-4 fw-bold border-bottom border-secondary mb-3 text-center">
             <i class="fas fa-chart-line text-primary me-2"></i> FINANCE<span class="text-primary">PRO</span>
         </div>
-        <nav class="mt-3">
+        <nav>
             <a href="{% url 'dashboard' %}"><i class="fas fa-home me-2"></i> Dashboard</a>
             <a href="{% url 'comptabilite' %}"><i class="fas fa-book me-2"></i> Comptabilité</a>
             <a href="{% url 'facturation' %}"><i class="fas fa-file-invoice-dollar me-2"></i> Facturation</a>
@@ -37,15 +36,12 @@
     <div class="main-content">
         <div class="top-navbar d-flex justify-content-between align-items-center mb-4">
             <h4 class="mb-0 fw-bold">Espace Administration</h4>
-            <div class="d-flex align-items-center">
-                <span class="text-dark me-4 fw-semibold"><i class="fas fa-user-shield text-danger me-2"></i>{{ request.user.username }}</span>
-                <a href="{% url 'logout' %}" class="btn btn-sm btn-outline-danger">Déconnexion</a>
-            </div>
+            <span class="fw-semibold"><i class="fas fa-user-shield text-danger me-2"></i>{{ request.user.username }}</span>
         </div>
 
         <div class="container-fluid px-4">
             <div class="d-flex justify-content-between align-items-center mb-4">
-                <p class="text-muted mb-0">Gestion sécurisée des accès et des collaborateurs.</p>
+                <p class="text-muted mb-0">Gestion rigoureuse des accès et des utilisateurs.</p>
                 <div class="d-flex gap-2">
                     <button class="btn btn-outline-primary shadow-sm" data-bs-toggle="modal" data-bs-target="#manageGroupsModal">
                         <i class="fas fa-users-cog me-2"></i>Gérer les Groupes
@@ -56,12 +52,12 @@
                 </div>
             </div>
 
-            <div class="table-custom p-4">
+            <div class="table-custom p-4 shadow-sm">
                 <table class="table table-hover align-middle mb-0">
                     <thead class="bg-light">
                         <tr>
                             <th>Identifiant</th>
-                            <th>Rôles / Groupes</th>
+                            <th>Rôle / Groupes</th>
                             <th class="text-end">Actions</th>
                         </tr>
                     </thead>
@@ -72,7 +68,7 @@
                             <td>
                                 {% if u.is_superuser %}<span class="badge bg-danger">Administrateur</span>
                                 {% else %}
-                                    {% for g in u.groups.all %}<span class="badge bg-primary bg-opacity-10 text-primary border border-primary border-opacity-10">{{ g.name }}</span>{% empty %}<span class="text-muted small">Standard</span>{% endfor %}
+                                    {% for g in u.groups.all %}<span class="badge bg-primary bg-opacity-10 text-primary border border-primary border-opacity-25">{{ g.name }}</span>{% empty %}<span class="text-muted">Standard</span>{% endfor %}
                                 {% endif %}
                             </td>
                             <td class="text-end">
@@ -85,7 +81,7 @@
 
                         <div class="modal fade" id="editUserModal{{ u.id }}" tabindex="-1">
                             <div class="modal-dialog modal-dialog-centered">
-                                <div class="modal-content border-0 shadow">
+                                <div class="modal-content border-0 shadow-lg">
                                     <div class="modal-header bg-light">
                                         <h5 class="modal-title fw-bold">Modifier : {{ u.username }}</h5>
                                         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
@@ -94,18 +90,18 @@
                                         {% csrf_token %}
                                         <div class="modal-body p-4">
                                             <div class="mb-3">
-                                                <label class="form-label fw-bold small">Nom d'utilisateur</label>
+                                                <label class="form-label fw-bold small">Identifiant</label>
                                                 <input type="text" name="username" class="form-control" value="{{ u.username }}" required>
                                             </div>
                                             <div class="mb-3">
                                                 <label class="form-label fw-bold small text-danger">Mot de passe (Obligatoire)</label>
-                                                <input type="password" name="password" class="form-control" placeholder="Saisir le mot de passe actuel ou un nouveau" required>
+                                                <input type="password" name="password" class="form-control" placeholder="Entrez le mot de passe actuel ou nouveau" required>
                                             </div>
                                             <div class="mb-3">
-                                                <label class="form-label fw-bold small">Rôle</label>
+                                                <label class="form-label fw-bold small">Groupe d'accès</label>
                                                 <select name="role" class="form-select" required>
                                                     <option value="admin" {% if u.is_superuser %}selected{% endif %}>Administrateur</option>
-                                                    <option value="" {% if not u.is_superuser and u.groups.count == 0 %}selected{% endif %}>Utilisateur Standard</option>
+                                                    <option value="" {% if not u.is_superuser and u.groups.count == 0 %}selected{% endif %}>Standard</option>
                                                     {% for g in groupes %}
                                                     <option value="{{ g.id }}" {% if g in u.groups.all %}selected{% endif %}>{{ g.name }}</option>
                                                     {% endfor %}
@@ -114,7 +110,7 @@
                                         </div>
                                         <div class="modal-footer">
                                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
-                                            <button type="submit" class="btn btn-primary">Enregistrer</button>
+                                            <button type="submit" class="btn btn-primary">Mettre à jour</button>
                                         </div>
                                     </form>
                                 </div>
@@ -131,25 +127,27 @@
         <div class="modal-dialog modal-lg modal-dialog-centered">
             <div class="modal-content border-0 shadow-lg">
                 <div class="modal-header bg-dark text-white">
-                    <h5 class="modal-title fw-bold">Gestion des Groupes</h5>
+                    <h5 class="modal-title">Groupes, Accès & Membres</h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body p-4">
-                    <form action="{% url 'ajouter_groupe' %}" method="POST" class="mb-4 pb-4 border-bottom d-flex gap-2">
+                    <form action="{% url 'ajouter_groupe' %}" method="POST" class="mb-4 pb-4 border-bottom">
                         {% csrf_token %}
-                        <input type="text" name="name" class="form-control" placeholder="Nom du nouveau groupe" required>
-                        <button type="submit" class="btn btn-primary px-4">Créer</button>
+                        <div class="row g-2">
+                            <div class="col-md-9"><input type="text" name="name" class="form-control" placeholder="Nom du nouveau groupe" required></div>
+                            <div class="col-md-3"><button type="submit" class="btn btn-primary w-100">Créer Groupe</button></div>
+                        </div>
                     </form>
 
                     <div class="accordion" id="accGroup">
                         {% for g in groupes %}
                         <div class="accordion-item mb-2 border rounded">
                             <h2 class="accordion-header">
-                                <button class="accordion-button collapsed fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#g{{ g.id }}">
+                                <button class="accordion-button collapsed fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#group{{ g.id }}">
                                     {{ g.name }} ({{ g.user_set.count }} membre(s))
                                 </button>
                             </h2>
-                            <div id="g{{ g.id }}" class="accordion-collapse collapse" data-bs-parent="#accGroup">
+                            <div id="group{{ g.id }}" class="accordion-collapse collapse" data-bs-parent="#accGroup">
                                 <form action="{% url 'modifier_groupe' g.id %}" method="POST" class="accordion-body bg-light">
                                     {% csrf_token %}
                                     <div class="mb-3">
@@ -158,31 +156,25 @@
                                     </div>
                                     <div class="row">
                                         <div class="col-md-6">
-                                            <label class="form-label small fw-bold">Droits (Permissions)</label>
+                                            <label class="form-label small fw-bold">Accès (Permissions)</label>
                                             <div class="scroll-area">
                                                 {% for p in permissions %}
-                                                <div class="form-check small">
-                                                    <input class="form-check-input" type="checkbox" name="permissions" value="{{ p.id }}" id="p{{ g.id }}{{ p.id }}" {% if p in g.permissions.all %}checked{% endif %}>
-                                                    <label class="form-check-label" for="p{{ g.id }}{{ p.id }}">{{ p.name }}</label>
-                                                </div>
+                                                <div class="form-check small"><input class="form-check-input" type="checkbox" name="permissions" value="{{ p.id }}" id="p{{ g.id }}{{ p.id }}" {% if p in g.permissions.all %}checked{% endif %}><label class="form-check-label" for="p{{ g.id }}{{ p.id }}">{{ p.name }}</label></div>
                                                 {% endfor %}
                                             </div>
                                         </div>
                                         <div class="col-md-6">
-                                            <label class="form-label small fw-bold">Utilisateurs membres</label>
+                                            <label class="form-label small fw-bold">Affecter des membres</label>
                                             <div class="scroll-area">
                                                 {% for u in utilisateurs %}
-                                                <div class="form-check small">
-                                                    <input class="form-check-input" type="checkbox" name="membres" value="{{ u.id }}" id="m{{ g.id }}{{ u.id }}" {% if g in u.groups.all %}checked{% endif %}>
-                                                    <label class="form-check-label" for="m{{ g.id }}{{ u.id }}">{{ u.username }}</label>
-                                                </div>
+                                                <div class="form-check small"><input class="form-check-input" type="checkbox" name="membres" value="{{ u.id }}" id="m{{ g.id }}{{ u.id }}" {% if g in u.groups.all %}checked{% endif %}><label class="form-check-label" for="m{{ g.id }}{{ u.id }}">{{ u.username }}</label></div>
                                                 {% endfor %}
                                             </div>
                                         </div>
                                     </div>
                                     <div class="mt-3 d-flex justify-content-between">
                                         <button type="button" class="btn btn-sm btn-outline-danger border-0" onclick="confirmerSuppressionGroup('{% url 'supprimer_groupe' g.id %}')">Supprimer Groupe</button>
-                                        <button type="submit" class="btn btn-sm btn-success px-4">Enregistrer les changements</button>
+                                        <button type="submit" class="btn btn-sm btn-success px-3">Enregistrer tout</button>
                                     </div>
                                 </form>
                             </div>
@@ -198,7 +190,7 @@
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content border-0 shadow">
                 <div class="modal-header bg-primary text-white">
-                    <h5 class="modal-title fw-bold">Créer un profil</h5>
+                    <h5 class="modal-title fw-bold">Créer un utilisateur</h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
                 <form action="{% url 'ajouter_utilisateur' %}" method="POST">
@@ -212,9 +204,7 @@
                             {% for g in groupes %}<option value="{{ g.id }}">{{ g.name }}</option>{% endfor %}
                         </select>
                     </div>
-                    <div class="modal-footer">
-                        <button type="submit" class="btn btn-primary w-100">Valider la création</button>
-                    </div>
+                    <div class="modal-footer"><button type="submit" class="btn btn-primary">Valider la création</button></div>
                 </form>
             </div>
         </div>
@@ -223,19 +213,9 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
-        function confirmerSuppression(url) {
-            Swal.fire({ title: 'Supprimer cet utilisateur ?', icon: 'warning', showCancelButton: true, confirmButtonColor: '#d33', confirmButtonText: 'Oui' })
-            .then((result) => { if (result.isConfirmed) window.location.href = url; })
-        }
-        function confirmerSuppressionGroup(url) {
-            Swal.fire({ title: 'Supprimer ce groupe ?', text: "L'accès sera révoqué pour tous ses membres.", icon: 'warning', showCancelButton: true, confirmButtonColor: '#d33', confirmButtonText: 'Oui' })
-            .then((result) => { if (result.isConfirmed) window.location.href = url; })
-        }
-        {% if messages %}
-            {% for m in messages %}
-                Swal.fire({ icon: '{% if m.tags == "error" %}error{% else %}success{% endif %}', title: '{{ m }}' });
-            {% endfor %}
-        {% endif %}
+        function confirmerSuppression(url) { Swal.fire({ title: 'Supprimer cet utilisateur ?', icon: 'warning', showCancelButton: true, confirmButtonColor: '#d33', confirmButtonText: 'Oui' }).then((result) => { if (result.isConfirmed) window.location.href = url; }) }
+        function confirmerSuppressionGroup(url) { Swal.fire({ title: 'Supprimer le groupe ?', icon: 'warning', showCancelButton: true, confirmButtonColor: '#d33', confirmButtonText: 'Oui' }).then((result) => { if (result.isConfirmed) window.location.href = url; }) }
+        {% if messages %}{% for message in messages %}Swal.fire({ icon: '{% if message.tags == "error" %}error{% else %}success{% endif %}', title: '{{ message }}' });{% endfor %}{% endif %}
     </script>
 </body>
 </html>
