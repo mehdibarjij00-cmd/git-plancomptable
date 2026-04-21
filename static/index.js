@@ -1,0 +1,187 @@
+const loginInput = document.getElementById('loginemail');
+const passwordInput = document.getElementById('loginPassword');
+const capsWarning = document.getElementById('caps-warning');
+// Fonction pour vérifier l'état de la touche Majuscule
+function checkCapsLock(event) {
+    if (event.getModifierState && event.getModifierState('CapsLock')) {
+        // On ajoute la classe "active" pour déclencher l'animation CSS
+        capsWarning.classList.add('active'); 
+    } else {
+        // On la retire pour faire disparaître la bulle en douceur
+        capsWarning.classList.remove('active');  
+    }
+}
+// 
+// Les écouteurs d'événements restent les mêmes
+if (loginInput && passwordInput && capsWarning) {
+    loginInput.addEventListener('keyup', checkCapsLock);
+    loginInput.addEventListener('mousedown', checkCapsLock);
+    passwordInput.addEventListener('keyup', checkCapsLock);
+    passwordInput.addEventListener('mousedown', checkCapsLock);
+}
+
+
+
+
+/*global $, document, window, setTimeout, navigator, console, location*/
+$(document).ready(function () {
+
+    'use strict';
+
+    var usernameError = true,
+        emailError    = true,
+        passwordError = true,
+        passConfirm   = true;
+
+    // Detect browser for css purpose
+    if (navigator.userAgent.toLowerCase().indexOf('firefox') > -1) {
+        $('.form form label').addClass('fontSwitch');
+    }
+
+    // Label effect
+    $('input').focus(function () {
+
+        $(this).siblings('label').addClass('active');
+    });
+
+    // Form validation
+    $('input').blur(function () {
+
+        // User Name
+        if ($(this).hasClass('name')) {
+            if ($(this).val().length === 0) {
+                $(this).siblings('span.error').text('Please type your full name').fadeIn().parent('.form-group').addClass('hasError');
+                usernameError = true;
+            } else if ($(this).val().length > 1 && $(this).val().length <= 6) {
+                $(this).siblings('span.error').text('Please type at least 6 characters').fadeIn().parent('.form-group').addClass('hasError');
+                usernameError = true;
+            } else {
+                $(this).siblings('.error').text('').fadeOut().parent('.form-group').removeClass('hasError');
+                usernameError = false;
+            }
+        }
+        // Email
+        if ($(this).hasClass('email')) {
+            if ($(this).val().length == '') {
+                $(this).siblings('span.error').text('Please type your email address').fadeIn().parent('.form-group').addClass('hasError');
+                emailError = true;
+            } else {
+                $(this).siblings('.error').text('').fadeOut().parent('.form-group').removeClass('hasError');
+                emailError = false;
+            }
+        }
+
+        // PassWord
+        if ($(this).hasClass('pass')) {
+            if ($(this).val().length < 8) {
+                $(this).siblings('span.error').text('Please type at least 8 charcters').fadeIn().parent('.form-group').addClass('hasError');
+                passwordError = true;
+            } else {
+                $(this).siblings('.error').text('').fadeOut().parent('.form-group').removeClass('hasError');
+                passwordError = false;
+            }
+        }
+
+        // PassWord confirmation
+        if ($('.pass').val() !== $('.passConfirm').val()) {
+            $('.passConfirm').siblings('.error').text('Passwords don\'t match').fadeIn().parent('.form-group').addClass('hasError');
+            passConfirm = false;
+        } else {
+            $('.passConfirm').siblings('.error').text('').fadeOut().parent('.form-group').removeClass('hasError');
+            passConfirm = false;
+        }
+
+        // label effect
+        if ($(this).val().length > 0) {
+            $(this).siblings('label').addClass('active');
+        } else {
+            $(this).siblings('label').removeClass('active');
+        }
+    });
+
+
+    // form switch
+    $('a.switch').click(function (e) {
+        $(this).toggleClass('active');
+        e.preventDefault();
+
+        if ($('a.switch').hasClass('active')) {
+            $(this).parents('.form-peice').addClass('switched').siblings('.form-peice').removeClass('switched');
+        } else {
+            $(this).parents('.form-peice').removeClass('switched').siblings('.form-peice').addClass('switched');
+        }
+    });
+
+
+    // Form submit
+    $('form.signup-form').submit(function (event) {
+        event.preventDefault();
+
+        if (usernameError == true || emailError == true || passwordError == true || passConfirm == true) {
+            $('.name, .email, .pass, .passConfirm').blur();
+        } else {
+            $('.signup, .login').addClass('switched');
+
+            setTimeout(function () { $('.signup, .login').hide(); }, 700);
+            setTimeout(function () { $('.brand').addClass('active'); }, 300);
+            setTimeout(function () { $('.heading').addClass('active'); }, 600);
+            setTimeout(function () { $('.success-msg p').addClass('active'); }, 900);
+            setTimeout(function () { $('.success-msg a').addClass('active'); }, 1050);
+            setTimeout(function () { $('.form').hide(); }, 700);
+        }
+    });
+
+    // Reload page
+    $('a.profile').on('click', function () {
+        location.reload(true);
+    });
+
+
+});
+
+
+// Fonction pour afficher l'alerte d'erreur
+function showErrorAlert(message) {
+    Swal.fire({
+        icon: 'error',
+        title: 'Accès Refusé',
+        text: message,
+        confirmButtonColor: '#ff5a5f',
+        confirmButtonText: 'Réessayer',
+        showClass: {
+            popup: 'animate__animated animate__fadeInDown' // Petit effet d'entrée
+        },
+        didOpen: () => {
+            const container = document.querySelector('.swal2-container');
+            if (container) container.style.zIndex = "10000";
+        }
+    }).then((result) => {
+        if (result.isConfirmed) {
+            // Cette ligne permet de "nettoyer" l'état pour que 
+            // l'alerte ne revienne pas si on fait F5 par erreur.
+            window.history.replaceState({}, document.title, window.location.pathname);
+        }
+    });
+}
+
+// sweet alert pour les erreurs de suppression
+// index.js
+
+// index.js
+
+function confirmerSuppression(url) {
+    Swal.fire({
+        title: 'Es-tu sûr ?',
+        text: "Cette action est risquée !",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: 'Oui, supprimer !',
+        cancelButtonText: 'Annuler'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            window.location.href = url;
+        }
+    }); // On ferme proprement le .then
+} // On ferme proprement la fonction

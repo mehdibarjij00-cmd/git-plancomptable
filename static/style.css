@@ -1,0 +1,203 @@
+--- Variables et Base ---
+body {
+    font-family: 'Montserrat', sans-serif;
+    background: #f7edd5;
+}
+
+.container {
+    max-width: 900px;
+}
+
+a {
+    display: inline-block;
+    text-decoration: none;
+}
+
+input {
+    outline: none !important;
+}
+
+/* --- Section Layout --- */
+section#formHolder {
+    padding: 50px 0;
+}
+
+/* --- Brand Area (Gauche) --- */
+.brand {
+    padding: 20px;
+    background: url(https://goo.gl/A0ynht);
+    background-size: cover;
+    background-position: center center;
+    color: #fff;
+    min-height: 540px;
+    position: relative;
+    box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.3);
+    z-index: 9999;
+    right: 130px;
+}
+
+.brand::before {
+    content: '';
+    display: block;
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0; left: 0;
+    background: rgba(0, 0, 0, 0.85);
+    z-index: -1;
+}
+
+.brand .heading {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+}
+
+.brand .heading h2 {
+    font-size: 70px;
+    font-weight: 700;
+    text-transform: uppercase;
+    margin: 0;
+}
+
+/* --- Form Area (Droite) --- */
+.form {
+    position: relative;
+}
+
+.form .form-peice {
+    background: #fff;
+    min-height: 480px;
+    margin-top: 30px;
+    box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.2);
+    padding: 30px 0 60px;
+    position: absolute;
+    top: 0; left: -30%;
+    width: 130%;
+}
+
+.form form {
+    padding: 0 40px;
+    width: 70%;
+    position: absolute;
+    top: 50%; left: 60%;
+    transform: translate(-50%, -50%);
+}
+
+/* --- GESTION DES LABELS (La partie qui t'intéresse) --- */
+.form .form-group {
+    margin-bottom: 20px;
+    position: relative;
+}
+
+/* Position du label par défaut */
+.form form label {
+    font-size: 12px;
+    font-weight: 400;
+    text-transform: uppercase;
+    font-family: 'Montserrat', sans-serif;
+    position: absolute;
+    top: 12px;
+    left: 0;
+    transition: all 0.3s ease;
+    cursor: text;
+    z-index: 1; /* Derrière l'input pour ne pas bloquer le clic */
+    color: #bbbbbb;
+}
+
+/* L'input doit être transparent pour voir le label derrière au début */
+.form form input:not([type=submit]) {
+    background: transparent !important;
+    outline: none;
+    border: none;
+    display: block;
+    padding: 10px 0;
+    width: 100%;
+    border-bottom: 1px solid #eee;
+    color: #444;
+    font-size: 15px;
+    position: relative;
+    z-index: 2; /* Devant le label */
+}
+
+/* --- MAGIE : DISPARITION --- */
+/* Si l'input est cliqué (focus) OU s'il n'est pas vide (not placeholder-shown) */
+.form form input:focus + label,
+.form form input:not(:placeholder-shown) + label {
+    opacity: 0 !important;
+    visibility: hidden !important;
+    transform: translateY(-15px);
+}
+
+/* --- Bouton et Footer --- */
+.form form .CTA {
+    margin-top: 30px;
+}
+
+.form form .CTA input {
+    font-size: 12px;
+    text-transform: uppercase;
+    padding: 8px 30px;
+    background: #f95959;
+    color: #fff;
+    border-radius: 30px;
+    border: none;
+    cursor: pointer;
+}
+
+.form form input[type=password] {
+    color: #f95959;
+}
+
+footer {
+    text-align: center;
+    margin-top: 20px;
+}
+
+/* maj */
+.form-group {
+    position: relative;
+}
+
+/* Le design de la bulle d'avertissement */
+.caps-tooltip {
+    position: absolute;
+    right: 10px; /* On le place à droite dans le champ */
+    top: 35px; /* À ajuster légèrement selon la hauteur de ton input */
+    background-color: #ff5a5f; /* Ton rouge */
+    color: white;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: bold;
+    box-shadow: 0px 4px 8px rgba(255, 90, 95, 0.3);
+    pointer-events: none; /* Empêche la bulle de bloquer le clic dans l'input */
+    
+    /* Animation fluide au lieu du display block/none */
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(10px);
+    transition: all 0.3s cubic-bezier(0.68, -0.55, 0.27, 1.55); /* Effet rebond */
+}
+
+/* La classe qui sera ajoutée par le JavaScript */
+.caps-tooltip.active {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+/* Petit effet de pulse sur l'icône Majuscule */
+.caps-icon {
+    display: inline-block;
+    animation: pulseIcon 1.5s infinite;
+}
+
+@keyframes pulseIcon {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.2); }
+    100% { transform: scale(1); }
+}
+
+

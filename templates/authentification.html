@@ -1,0 +1,106 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FinanceManager PRO - Authentification</title>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700|Raleway:300,400,600" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'style.css' %}">
+</head>
+<body>
+
+<div class="container">
+    <section id="formHolder">
+        <div class="row">
+
+            <div style="right: 130px !important;" class="col-sm-6 brand">
+                <div class="heading">
+                    <h2>PLAN COMPTABLE</h2>
+                    <p>Gestion Simplifiée</p>
+                </div>
+            </div>
+
+            <div class="col-sm-6 form">
+                <div class="login form-peice">
+                    <form class="login-form" method="post">
+                        {% csrf_token %} 
+                        
+                        <div class="form-group">
+                            <label for="loginemail"> </label>
+                            <input type="text" name="username" id="loginemail" placeholder="Identifiant " required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="loginPassword"></label>
+                            <input type="password" name="password" id="loginPassword" placeholder="Mot de passe " required>
+                            <div id="caps-warning" class="caps-tooltip">
+                                <span class="caps-icon">⇪</span> Majuscule activée
+                            </div>
+                        </div>
+
+                        <div class="CTA">
+                            <input type="submit" value="Se connecter">
+                        </div>
+                    </form>
+                </div>
+            </div> 
+        </div> 
+    </section> 
+
+    <footer>
+        <p> <a href=""></a></p>
+    </footer>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const switchButtons = document.querySelectorAll('.switch');
+        const loginForm = document.querySelector('.login.form-peice');
+        const signupForm = document.querySelector('.signup.form-peice');
+
+        switchButtons.forEach(button => {
+            button.addEventListener('click', function(e) {
+                e.preventDefault();
+                if(loginForm) loginForm.classList.toggle('switched');
+                if(signupForm) signupForm.classList.toggle('switched');
+            });
+        });
+
+        const loginInput = document.getElementById('loginemail');
+        const passwordInput = document.getElementById('loginPassword');
+        const capsWarning = document.getElementById('caps-warning');
+
+        function checkCapsLock(event) {
+            if (event.getModifierState && event.getModifierState('CapsLock')) {
+                capsWarning.style.display = 'block'; 
+            } else {
+                capsWarning.style.display = 'none';  
+            }
+        }
+
+        if (loginInput && passwordInput && capsWarning) {
+            loginInput.addEventListener('keyup', checkCapsLock);
+            loginInput.addEventListener('mousedown', checkCapsLock);
+            passwordInput.addEventListener('keyup', checkCapsLock);
+            passwordInput.addEventListener('mousedown', checkCapsLock);
+        }
+    });
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="{% static 'index.js' %}"></script>
+
+{% if messages and request.method == 'POST' %}
+    <script>
+        {% for message in messages %}
+            {% if message.tags == "error" %}
+                showErrorAlert("{{ message }}");
+            {% endif %}
+        {% endfor %}
+    </script>
+{% endif %}
+</body>
+</html>
