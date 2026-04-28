@@ -1,0 +1,20 @@
+[
+  {"model": "authentification.comptecomptable", "pk": 1, "fields": {"numero": "101", "libelle": "Capital social", "classe": 1}},
+  {"model": "authentification.comptecomptable", "pk": 2, "fields": {"numero": "164", "libelle": "Emprunts bancaires", "classe": 1}},
+  {"model": "authentification.comptecomptable", "pk": 3, "fields": {"numero": "211", "libelle": "Terrains", "classe": 2}},
+  {"model": "authentification.comptecomptable", "pk": 4, "fields": {"numero": "215", "libelle": "Materiel et outillage", "classe": 2}},
+  {"model": "authentification.comptecomptable", "pk": 5, "fields": {"numero": "310", "libelle": "Stocks de marchandises", "classe": 3}},
+  {"model": "authentification.comptecomptable", "pk": 6, "fields": {"numero": "401", "libelle": "Fournisseurs", "classe": 4}},
+  {"model": "authentification.comptecomptable", "pk": 7, "fields": {"numero": "411", "libelle": "Clients", "classe": 4}},
+  {"model": "authentification.comptecomptable", "pk": 8, "fields": {"numero": "445", "libelle": "TVA collectee", "classe": 4}},
+  {"model": "authentification.comptecomptable", "pk": 9, "fields": {"numero": "512", "libelle": "Banque", "classe": 5}},
+  {"model": "authentification.comptecomptable", "pk": 10, "fields": {"numero": "530", "libelle": "Caisse", "classe": 5}},
+  {"model": "authentification.comptecomptable", "pk": 11, "fields": {"numero": "601", "libelle": "Achats de marchandises", "classe": 6}},
+  {"model": "authentification.comptecomptable", "pk": 12, "fields": {"numero": "606", "libelle": "Achats fournitures bureau", "classe": 6}},
+  {"model": "authentification.comptecomptable", "pk": 13, "fields": {"numero": "613", "libelle": "Loyers", "classe": 6}},
+  {"model": "authentification.comptecomptable", "pk": 14, "fields": {"numero": "641", "libelle": "Salaires", "classe": 6}},
+  {"model": "authentification.comptecomptable", "pk": 15, "fields": {"numero": "661", "libelle": "Charges d'interets", "classe": 6}},
+  {"model": "authentification.comptecomptable", "pk": 16, "fields": {"numero": "701", "libelle": "Ventes de marchandises", "classe": 7}},
+  {"model": "authentification.comptecomptable", "pk": 17, "fields": {"numero": "706", "libelle": "Prestations de services", "classe": 7}},
+  {"model": "authentification.comptecomptable", "pk": 18, "fields": {"numero": "708", "libelle": "Produits des activites annexes", "classe": 7}}
+]
